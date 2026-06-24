@@ -22,8 +22,17 @@
 
     * { box-sizing: border-box; }
 
+    html {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
     body {
       margin: 0;
+      width: 100%;
+      max-width: 100%;
+      position: relative;
       font-family: "Inter", sans-serif;
       color: var(--ink);
       background-color: var(--paper);
@@ -196,6 +205,53 @@
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0);
+    }
+
+    @media (max-width: 640px) {
+      html, body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        position: relative;
+      }
+
+      main, header, footer, section {
+        max-width: 100%;
+      }
+
+      img, video, canvas, svg {
+        max-width: 100%;
+      }
+
+      .glow-blob {
+        max-width: 82vw;
+        max-height: 82vw;
+      }
+
+      .hero-bg-video {
+        transform: scale(1.05);
+      }
+
+      #reviews {
+        overflow-x: hidden;
+      }
+
+      #review-form-container {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 2rem;
+        padding: 1.5rem;
+      }
+
+      #review-form input,
+      #review-form textarea,
+      #review-form button {
+        width: 100%;
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -388,8 +444,8 @@
             </h3>
             <form id="review-form" class="space-y-4">
               <div>
-                <label class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Nama Lengkap</label>
-                <input type="text" id="rev-name" required placeholder="Contoh: Budi Santoso" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-all text-sm">
+                <label class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Nama</label>
+                <input type="text" id="rev-name" required placeholder="Contoh: Adnan Tio" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-all text-sm">
               </div>
               <div>
                 <label class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Status / Profesi</label>
@@ -546,7 +602,30 @@
     </div>
   </footer>
 
-  <script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  push,
+  onValue,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCjaTm7_qu4GoaV6ep8ZLJR19yGd3DASKM",
+  authDomain: "jasadigital-fb06a.firebaseapp.com",
+  databaseURL: "https://jasadigital-fb06a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "jasadigital-fb06a",
+  storageBucket: "jasadigital-fb06a.firebasestorage.app",
+  messagingSenderId: "285916162734",
+  appId: "1:285916162734:web:4417ec6a0e706648681b3f",
+  measurementId: "G-H4GZS35H7Y"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const reviewsRef = ref(db, "reviews");
     // 1. SCROLL PROGRESS BAR LOGIC
     window.addEventListener('scroll', () => {
       const scrollProgress = document.getElementById('scroll-progress');
@@ -880,25 +959,48 @@
     ];
 
     let showAllReviews = false;
-
+let reviewsData = [...defaultReviews];
     function getReviews() {
-      const stored = localStorage.getItem('threesixnine_reviews_v2');
-      if (!stored) {
-        localStorage.setItem('threesixnine_reviews_v2', JSON.stringify(defaultReviews));
-        return defaultReviews;
-      }
-      try { return JSON.parse(stored); } catch (e) { return defaultReviews; }
-    }
+  return reviewsData;
+}
 
-    function saveReview(name, status, rating, text) {
-      const currentReviews = getReviews();
-      currentReviews.unshift({ name, status, rating: parseInt(rating), text });
-      localStorage.setItem('threesixnine_reviews_v2', JSON.stringify(currentReviews));
-      localStorage.setItem('threesixnine_has_reviewed', 'true');
-      renderReviewsList();
-      checkReviewStatus();
-    }
+    async function saveReview(name, status, rating, text) {
+  try {
+    await push(reviewsRef, {
+      name: name,
+      status: status,
+      rating: parseInt(rating),
+      text: text,
+      createdAt: serverTimestamp()
+    });
 
+    localStorage.setItem('threesixnine_has_reviewed', 'true');
+    checkReviewStatus();
+  } catch (error) {
+    console.error("Gagal mengirim ulasan:", error);
+    alert("Maaf, ulasan gagal dikirim. Coba lagi.");
+  }
+}
+function loadReviewsFromFirebase() {
+  onValue(reviewsRef, (snapshot) => {
+    const firebaseReviews = [];
+
+    snapshot.forEach((childSnapshot) => {
+      firebaseReviews.push(childSnapshot.val());
+    });
+
+    firebaseReviews.sort((a, b) => {
+      return (b.createdAt || 0) - (a.createdAt || 0);
+    });
+
+    reviewsData = [...firebaseReviews, ...defaultReviews];
+    renderReviewsList();
+  }, (error) => {
+    console.error("Gagal mengambil ulasan:", error);
+    reviewsData = [...defaultReviews];
+    renderReviewsList();
+  });
+}
     function renderReviewsList() {
       const container = document.getElementById('reviews-container');
       const paginationContainer = document.getElementById('review-pagination-container');
@@ -1066,7 +1168,7 @@
     window.addEventListener("load", () => {
       renderCategorizedServices();
       initCalculator();
-      renderReviewsList();
+      loadReviewsFromFirebase();
       checkReviewStatus();
       initReviewForm();
       initFaqAccordion();
