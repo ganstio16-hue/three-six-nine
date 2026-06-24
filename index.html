@@ -28,19 +28,6 @@
       color: var(--ink);
       background-color: var(--paper);
       overflow-x: hidden;
-      cursor: none; /* Menyembunyikan kursor asli untuk Custom Cursor */
-    }
-
-    a, button, select, input, textarea { cursor: none; }
-
-    /* CUSTOM CURSOR & FOLLOWER */
-    #cursor-dot {
-      transition: transform 0.05s linear;
-      box-shadow: 0 0 10px var(--accent);
-    }
-    #cursor-outline {
-      transition: transform 0.15s ease-out;
-      box-shadow: 0 0 15px rgba(255, 36, 76, 0.5);
     }
 
     .display { font-family: "Instrument Serif", serif; }
@@ -185,7 +172,7 @@
     ::-webkit-scrollbar-thumb { background: #1f1f2e; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-    .star-select-btn { transition: transform 150ms ease, color 150ms ease; cursor: none; }
+    .star-select-btn { transition: transform 150ms ease, color 150ms ease; cursor: pointer; }
     .star-select-btn:hover { transform: scale(1.25); }
 
     /* FAQ Logic Styles */
@@ -198,13 +185,21 @@
       0%, 100% { transform: translateX(-40%) skewX(-15deg); opacity: 0.1; }
       50% { transform: translateX(40%) skewX(-15deg); opacity: 0.35; }
     }
+
+    /* LOGIKA MENU MOBILE TAMPIL/SEMBUNYI AMAN DI HP */
+    #mobile-menu {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+    }
+    #mobile-menu.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body class="grain relative bg-black text-[var(--ink)]">
-
-  <!-- Custom Cursor Elements -->
-  <div id="cursor-dot" class="fixed top-0 left-0 w-2 h-2 bg-[var(--accent)] rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 mix-blend-screen hidden md:block"></div>
-  <div id="cursor-outline" class="fixed top-0 left-0 w-8 h-8 border border-[var(--accent)] rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 mix-blend-screen hidden md:block opacity-60"></div>
 
   <!-- Scroll Progress Bar -->
   <div id="scroll-progress" class="fixed top-0 left-0 h-[3px] z-[10000] shadow-[0_0_15px_var(--accent)]" style="width: 0%;"></div>
@@ -216,27 +211,27 @@
   <div class="glow-blob bg-purple-900 w-[30rem] h-[30rem] top-3/4 right-5" style="animation-delay: -6s;"></div>
   
   <header class="fixed top-0 left-0 z-50 w-full transition-all duration-300" id="header-nav">
-    <div class="mx-auto mt-4 flex max-w-7xl flex-col px-4 sm:px-6">
-      <div class="flex items-center justify-between gap-4 glass rounded-full px-5 py-3">
+    <div class="mx-auto mt-4 flex max-w-7xl flex-col px-4 sm:px-6 relative">
+      <div class="flex items-center justify-between gap-4 glass rounded-full px-5 py-3 relative z-20">
         <a href="#home" class="font-extrabold uppercase tracking-[0.22em] text-xs text-white hero-title-glitch transition-all">Three Six Nine</a>
         <nav class="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-[0.18em] text-zinc-300">
-          <a href="#services" class="transition-colors hover:text-[var(--accent)] cursor-none">Layanan</a>
-          <a href="#estimator" class="transition-colors hover:text-[var(--accent)] cursor-none">Kalkulator</a>
-          <a href="#reviews" class="transition-colors hover:text-[var(--accent)] cursor-none">Ulasan</a>
-          <a href="#process" class="transition-colors hover:text-[var(--accent)] cursor-none">Alur</a>
-          <a href="#faq" class="transition-colors hover:text-[var(--accent)] cursor-none">FAQ</a>
+          <a href="#services" class="transition-colors hover:text-[var(--accent)]">Layanan</a>
+          <a href="#estimator" class="transition-colors hover:text-[var(--accent)]">Kalkulator</a>
+          <a href="#reviews" class="transition-colors hover:text-[var(--accent)]">Ulasan</a>
+          <a href="#process" class="transition-colors hover:text-[var(--accent)]">Alur</a>
+          <a href="#faq" class="transition-colors hover:text-[var(--accent)]">FAQ</a>
         </nav>
-        <button id="mobile-menu-btn" class="flex items-center justify-center p-1 md:hidden text-white cursor-none">
+        <button id="mobile-menu-btn" class="flex items-center justify-center p-1 md:hidden text-white">
           <i data-lucide="menu" class="h-5 w-5"></i>
         </button>
       </div>
 
-      <nav id="mobile-menu" class="glass mt-3 flex flex-col gap-4 rounded-3xl p-5 text-sm font-bold uppercase tracking-[0.18em] md:hidden">
-        <a href="#services" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)] cursor-none">Layanan</a>
-        <a href="#estimator" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)] cursor-none">Kalkulator</a>
-        <a href="#reviews" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)] cursor-none">Ulasan</a>
-        <a href="#process" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)] cursor-none">Alur</a>
-        <a href="#faq" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)] cursor-none">FAQ</a>
+      <nav id="mobile-menu" class="glass absolute top-[110%] left-4 right-4 flex flex-col gap-4 rounded-3xl p-5 text-sm font-bold uppercase tracking-[0.18em] md:hidden z-10 transition-all duration-300">
+        <a href="#services" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)]">Layanan</a>
+        <a href="#estimator" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)]">Kalkulator</a>
+        <a href="#reviews" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)]">Ulasan</a>
+        <a href="#process" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)]">Alur</a>
+        <a href="#faq" class="menu-link w-full rounded-xl px-4 py-3 hover:bg-white/10 hover:text-[var(--accent)]">FAQ</a>
       </nav>
     </div>
   </header>
@@ -261,7 +256,6 @@
             <span class="block bg-gradient-to-br from-white to-zinc-500 bg-clip-text text-transparent hero-title-glitch transition-colors duration-300">Lengkap & Cepat.</span>
           </h1>
 
-          <!-- Teks Deskripsi sudah diubah, Memasukkan UMKM di sini -->
           <p class="hero-copy mt-8 max-w-2xl text-base leading-relaxed text-zinc-300 sm:text-lg">
             Kami menyediakan jasa ketik, PPT, CV, hingga website dan akun AI Premium siap pakai. Cocok untuk mahasiswa, <i>fresh graduate</i>, UMKM, dan profesional yang butuh efisiensi tinggi.
           </p>
@@ -269,7 +263,8 @@
       </div>
     </section>
 
-    <section class="relative z-20 -mt-10 border-y border-[var(--line)] bg-black/50 py-8 backdrop-blur-md">
+    <!-- FITUR BOX CEPAT/RAPI/AI -->
+    <section class="relative z-20 border-y border-[var(--line)] bg-black/50 py-8 backdrop-blur-md">
       <div class="mx-auto grid max-w-7xl gap-4 px-4 text-center sm:grid-cols-3 sm:px-6">
         <div class="fade-up rounded-3xl border border-white/5 bg-white/[0.02] p-6 transition hover:border-[var(--accent)]">
           <i data-lucide="zap" class="mx-auto mb-3 h-8 w-8 text-[var(--accent)]"></i>
@@ -321,18 +316,18 @@
             <div class="space-y-5">
               <div>
                 <label class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Pilih Layanan Utama</label>
-                <select id="estimator-select" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-[var(--accent)] transition-all cursor-none">
+                <select id="estimator-select" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-[var(--accent)] transition-all">
                 </select>
               </div>
               <div>
                 <label class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Pilih Detail / Varian</label>
-                <select id="estimator-variant" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-[var(--accent)] transition-all cursor-none">
+                <select id="estimator-variant" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-[var(--accent)] transition-all">
                 </select>
               </div>
               <div id="estimator-quantity-wrapper">
                 <label id="quantity-label" class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Kuantitas Pemesanan</label>
                 <div class="flex items-center gap-3">
-                  <input type="number" id="estimator-qty" value="1" min="1" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-[var(--accent)] transition-all cursor-none">
+                  <input type="number" id="estimator-qty" value="1" min="1" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-[var(--accent)] transition-all">
                   <span id="quantity-unit" class="text-zinc-300 text-sm font-bold shrink-0 bg-white/5 px-5 py-4 rounded-xl border border-white/5">Halaman</span>
                 </div>
               </div>
@@ -397,11 +392,11 @@
             <form id="review-form" class="space-y-4">
               <div>
                 <label class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Nama Lengkap</label>
-                <input type="text" id="rev-name" required placeholder="Contoh: Budi Santoso" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-all text-sm cursor-none">
+                <input type="text" id="rev-name" required placeholder="Contoh: Budi Santoso" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-all text-sm">
               </div>
               <div>
                 <label class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Status / Profesi</label>
-                <input type="text" id="rev-status" required placeholder="Contoh: Mahasiswa Akhir / UMKM" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-all text-sm cursor-none">
+                <input type="text" id="rev-status" required placeholder="Contoh: Mahasiswa Akhir / UMKM" class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-all text-sm">
               </div>
               <div>
                 <label class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Rating Bintang</label>
@@ -416,10 +411,9 @@
               </div>
               <div>
                 <label class="block text-xs font-bold uppercase tracking-[0.1em] text-zinc-400 mb-2">Isi Ulasan Anda</label>
-                <textarea id="rev-text" required rows="3" placeholder="Tuliskan pengalaman Anda menggunakan jasa Three Six Nine..." class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-all text-sm resize-none cursor-none"></textarea>
+                <textarea id="rev-text" required rows="3" placeholder="Tuliskan pengalaman Anda menggunakan jasa Three Six Nine..." class="w-full bg-zinc-900/80 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-all text-sm resize-none"></textarea>
               </div>
-              <!-- Magnetic Button diterapkan ke tombol kirim -->
-              <button type="submit" class="magnetic-btn w-full bg-white/5 border border-white/10 text-white font-bold py-3.5 px-6 rounded-xl hover:bg-[var(--accent)] hover:border-[var(--accent)] transition-all text-xs uppercase tracking-widest cursor-none">
+              <button type="submit" class="magnetic-btn w-full bg-white/5 border border-white/10 text-white font-bold py-3.5 px-6 rounded-xl hover:bg-[var(--accent)] hover:border-[var(--accent)] transition-all text-xs uppercase tracking-widest">
                 Kirim Ulasan
               </button>
             </form>
@@ -442,7 +436,7 @@
 
         <div class="space-y-4">
           <div class="fade-up glass rounded-2xl faq-item border border-white/10 transition-all duration-300">
-            <button class="w-full px-6 py-5 flex justify-between items-center text-white font-semibold hover:bg-white/5 transition-colors cursor-none">
+            <button class="w-full px-6 py-5 flex justify-between items-center text-white font-semibold hover:bg-white/5 transition-colors">
               <span>Berapa lama estimasi waktu pengerjaan tugas?</span>
               <i data-lucide="chevron-down" class="chevron h-5 w-5 transition-transform duration-300"></i>
             </button>
@@ -451,7 +445,7 @@
             </div>
           </div>
           <div class="fade-up glass rounded-2xl faq-item border border-white/10 transition-all duration-300">
-            <button class="w-full px-6 py-5 flex justify-between items-center text-white font-semibold hover:bg-white/5 transition-colors cursor-none">
+            <button class="w-full px-6 py-5 flex justify-between items-center text-white font-semibold hover:bg-white/5 transition-colors">
               <span>Apakah ada garansi atau sistem revisi jika terjadi kesalahan?</span>
               <i data-lucide="chevron-down" class="chevron h-5 w-5 transition-transform duration-300"></i>
             </button>
@@ -460,7 +454,7 @@
             </div>
           </div>
           <div class="fade-up glass rounded-2xl faq-item border border-white/10 transition-all duration-300">
-            <button class="w-full px-6 py-5 flex justify-between items-center text-white font-semibold hover:bg-white/5 transition-colors cursor-none">
+            <button class="w-full px-6 py-5 flex justify-between items-center text-white font-semibold hover:bg-white/5 transition-colors">
               <span>Bagaimana sistem keamanan data dan garansi akun premium 1 bulan?</span>
               <i data-lucide="chevron-down" class="chevron h-5 w-5 transition-transform duration-300"></i>
             </button>
@@ -518,20 +512,19 @@
         <div class="mt-12">
           <p class="mb-5 text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted)]">Pilih Platform Komunikasi Resmi</p>
           <div class="flex flex-col justify-center gap-4 sm:flex-row">
-            <!-- Magnetic Buttons Applied -->
-            <a href="https://api.whatsapp.com/send?phone=6281236970341" target="_blank" rel="noopener" class="magnetic-btn flex items-center justify-center gap-2 rounded-2xl border border-[var(--line)] bg-white/5 backdrop-blur-sm px-8 py-5 text-sm font-extrabold uppercase tracking-[0.16em] text-white hover:bg-white/10 hover:border-white/30 cursor-none inline-block">
+            <a href="https://api.whatsapp.com/send?phone=6281236970341" target="_blank" rel="noopener" class="magnetic-btn flex items-center justify-center gap-2 rounded-2xl border border-[var(--line)] bg-white/5 backdrop-blur-sm px-8 py-5 text-sm font-extrabold uppercase tracking-[0.16em] text-white hover:bg-white/10 hover:border-white/30 inline-block">
               <svg class="h-5 w-5 fill-current pointer-events-none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.405-.883-.728-1.48-1.624-1.653-1.922-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
               </svg>
               <span class="pointer-events-none">WhatsApp</span>
             </a>
-            <a href="https://instagram.com/threesixnine.co_" target="_blank" rel="noopener" class="magnetic-btn flex items-center justify-center gap-2 rounded-2xl border border-[var(--line)] bg-white/5 backdrop-blur-sm px-8 py-5 text-sm font-extrabold uppercase tracking-[0.16em] text-white hover:bg-white/10 hover:border-white/30 cursor-none inline-block">
+            <a href="https://instagram.com/threesixnine.co_" target="_blank" rel="noopener" class="magnetic-btn flex items-center justify-center gap-2 rounded-2xl border border-[var(--line)] bg-white/5 backdrop-blur-sm px-8 py-5 text-sm font-extrabold uppercase tracking-[0.16em] text-white hover:bg-white/10 hover:border-white/30 inline-block">
               <svg class="h-5 w-5 fill-current pointer-events-none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
               </svg>
               <span class="pointer-events-none">Instagram</span>
             </a>
-            <a href="https://t.me/adnnze" target="_blank" rel="noopener" class="magnetic-btn flex items-center justify-center gap-2 rounded-2xl border border-[var(--line)] bg-white/5 backdrop-blur-sm px-8 py-5 text-sm font-extrabold uppercase tracking-[0.16em] text-white hover:bg-white/10 hover:border-white/30 cursor-none inline-block">
+            <a href="https://t.me/adnnze" target="_blank" rel="noopener" class="magnetic-btn flex items-center justify-center gap-2 rounded-2xl border border-[var(--line)] bg-white/5 backdrop-blur-sm px-8 py-5 text-sm font-extrabold uppercase tracking-[0.16em] text-white hover:bg-white/10 hover:border-white/30 inline-block">
               <svg class="h-5 w-5 fill-current pointer-events-none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.198-.054-.31-.346-.116l-6.405 4.032-2.766-.863c-.602-.19-.613-.604.126-.893l10.812-4.17c.502-.18.966.115.823.905z"/>
               </svg>
@@ -557,7 +550,6 @@
   </footer>
 
   <script>
-    // 1. SCROLL PROGRESS BAR LOGIC
     window.addEventListener('scroll', () => {
       const scrollProgress = document.getElementById('scroll-progress');
       const totalScroll = document.documentElement.scrollTop;
@@ -573,19 +565,6 @@
       }
     });
 
-    // 2. CUSTOM CURSOR FOLLOWER LOGIC
-    const cursorDot = document.getElementById('cursor-dot');
-    const cursorOutline = document.getElementById('cursor-outline');
-    window.addEventListener('mousemove', (e) => {
-      const posX = e.clientX;
-      const posY = e.clientY;
-      if(cursorDot && cursorOutline) {
-        cursorDot.style.transform = `translate(${posX}px, ${posY}px) translate(-50%, -50%)`;
-        cursorOutline.style.transform = `translate(${posX}px, ${posY}px) translate(-50%, -50%)`;
-      }
-    });
-
-    // 3. CANVAS PARTICLE SYSTEM WITH CLICK EXPLOSION (RIPPLE)
     const canvas = document.getElementById('particle-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -609,7 +588,6 @@
       mouse.y = null;
     });
 
-    // Event Klik untuk membuat efek Shockwave/Ripple pada kanvas
     window.addEventListener('click', (e) => {
       ripples.push({
         x: e.clientX,
@@ -619,7 +597,6 @@
         opacity: 1
       });
       
-      // Menembakkan partikel menjauh saat diklik (Shockwave effect)
       for (let i = 0; i < particles.length; i++) {
         let dx = particles[i].x - e.clientX;
         let dy = particles[i].y - e.clientY;
@@ -644,18 +621,15 @@
         this.x += this.speedX;
         this.y += this.speedY;
 
-        // Friction to slow down click explosion speed naturally
         this.speedX *= 0.98;
         this.speedY *= 0.98;
         
-        // Return to base minimum speed
         if(Math.abs(this.speedX) < 0.2) this.speedX += (Math.random() * 0.2 - 0.1);
         if(Math.abs(this.speedY) < 0.2) this.speedY += (Math.random() * 0.2 - 0.1);
 
         if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
         if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
 
-        // Mouse hover repel
         if (mouse.x != null && mouse.y != null) {
           let dx = mouse.x - this.x;
           let dy = mouse.y - this.y;
@@ -686,7 +660,6 @@
     function animateParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Menggambar dan mengupdate efek ripple saat diklik
       for(let i = 0; i < ripples.length; i++) {
         let r = ripples[i];
         ctx.beginPath();
@@ -726,7 +699,6 @@
     initParticles();
     animateParticles();
 
-    // UMKM Removed from Catalog as requested
     const servicesData = [
       { id: "srv-01", icon: "keyboard", category: "Dokumen", title: "Jasa Ketik", desc: "Ketik dan format ulang dokumen Microsoft Word Anda secara profesional.", items: ["Ms. Word: 2k / halaman", "Daftar Pustaka: 2k", "Daftar Isi: 5k", "Penomoran Halaman: 3k", "Merapikan Ms. Word: 500 / halaman"] },
       { id: "srv-02", icon: "file-text", category: "Tugas", title: "Jasa Tugas / Dokumen", desc: "Bantu penyusunan makalah, laporan ilmiah, hingga proposal lengkap.", items: ["Makalah (materi sudah ada): 2k / hlm", "Makalah (materi belum ada): 5k / hlm", "Laporan / Proposal: 5k / hlm"] },
@@ -806,7 +778,6 @@
       setupSpotlightAndTiltEffect();
     }
 
-    // PENYEMPURNAAN 3D TILT & GLARE EFFECT PADA KARTU (Super Cool Feature)
     function setupSpotlightAndTiltEffect() {
       document.querySelectorAll('.service-card').forEach(card => {
         card.addEventListener('mousemove', e => {
@@ -814,17 +785,14 @@
           const x = e.clientX - rect.left;
           const y = e.clientY - rect.top;
           
-          // Efek Senter Merah (Spotlight)
           card.style.setProperty('--mouse-x', `${x}px`);
           card.style.setProperty('--mouse-y', `${y}px`);
 
-          // Efek Kaca Pantulan Cahaya (Glare)
           const glareX = (x / rect.width) * 100;
           const glareY = (y / rect.height) * 100;
           card.style.setProperty('--glare-x', `${glareX}%`);
           card.style.setProperty('--glare-y', `${glareY}%`);
 
-          // Efek Miring 3D (Tilt)
           const centerX = rect.width / 2;
           const centerY = rect.height / 2;
           const rotateX = ((y - centerY) / centerY) * -4; 
@@ -954,7 +922,7 @@
 
       if (list.length > 4) {
         paginationContainer.innerHTML = `
-          <button id="toggle-reviews-btn" class="bg-white/5 border border-white/10 text-white font-bold py-3 px-8 rounded-full hover:bg-[var(--accent)] hover:border-[var(--accent)] transition-all text-xs uppercase tracking-widest cursor-none">
+          <button id="toggle-reviews-btn" class="bg-white/5 border border-white/10 text-white font-bold py-3 px-8 rounded-full hover:bg-[var(--accent)] hover:border-[var(--accent)] transition-all text-xs uppercase tracking-widest">
             ${showAllReviews ? 'Sembunyikan' : 'Tampilkan Semua'}
           </button>
         `;
@@ -972,7 +940,7 @@
     function checkReviewStatus() {
       const hasReviewed = localStorage.getItem('threesixnine_has_reviewed');
       const formContainer = document.getElementById('review-form-container');
-      if (hasReviewed === 'true') {
+      if (hasReviewed === 'true' && formContainer) {
         formContainer.innerHTML = `
           <div class="text-center p-8 border border-[var(--line)] rounded-3xl bg-[var(--accent)]/5 flex flex-col items-center justify-center min-h-[300px]">
             <i data-lucide="check-circle" class="mb-4 h-12 w-12 text-[var(--accent)] animate-pulse"></i>
@@ -1062,20 +1030,16 @@
       });
     }
 
-    // FUNGSI BUTTON MAGNETIC SUPER KEREN
     function initMagneticButtons() {
       const magneticBtns = document.querySelectorAll('.magnetic-btn');
       magneticBtns.forEach(btn => {
         btn.addEventListener('mousemove', (e) => {
           const rect = btn.getBoundingClientRect();
-          // Hitung jarak kursor dari tengah tombol
           const x = e.clientX - rect.left - rect.width / 2;
           const y = e.clientY - rect.top - rect.height / 2;
-          // Tarik tombol ke arah kursor dengan kekuatan 30%
           btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
         });
         btn.addEventListener('mouseleave', () => {
-          // Kembalikan ke posisi semula dengan memantul halus
           btn.style.transform = 'translate(0px, 0px)';
         });
       });
